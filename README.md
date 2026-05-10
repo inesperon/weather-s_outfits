@@ -43,9 +43,9 @@ Le système analyse 3 paramètres clés pour déterminer la tenue :
 
 ## 📅 4. Planning de Réalisation
 
-| Phase | Activité | Objectif |
+| Séance | Date | Objectif |
 | :--- | :--- | :--- |
-| **Phase 1** | Conception | Étude des seuils météo et définition des 24 scénarios. |
+| **Séance 1** | 3-9 avril | Formation équipe + cahier des charges. |
 | **Phase 2** | Hardware | Câblage et tests unitaires des capteurs (I2C). |
 | **Phase 3** | Développement | Programmation de l'algorithme de décision sur Arduino. |
 | **Phase 4** | Intégration Web | Création de l'interface visuelle et réception des données. |
