@@ -46,10 +46,13 @@ Le système analyse 3 paramètres clés pour déterminer la tenue :
 | Séance | Date | Objectif |
 | :--- | :--- | :--- |
 | **Séance 1** | 3-9 avril | Formation équipe + cahier des charges. |
-| **Phase 2** | Hardware | Câblage et tests unitaires des capteurs (I2C). |
-| **Phase 3** | Développement | Programmation de l'algorithme de décision sur Arduino. |
-| **Phase 4** | Intégration Web | Création de l'interface visuelle et réception des données. |
-| **Phase 5** | Déploiement | Tests finaux et rédaction de la documentation GitHub. |
+| **Séance 2** | 13-16 avril | Formation Github + démarrage projet |
+| **Séance 3** | 20-23 avril | Développement capteurs |
+| **Séance 4** | 27-30 avril | Présentation intermédiaire |
+| **Séance 5** | 4-7 mai | Intégration LoRa |
+| **Séance 6** | 11-14 mai | Tests et améliorations |
+| **Séance 7** | 18-21 mai | Finalisation démonstrateur |
+| **Séance 8** | 26-28 mai | Présentation finale + démo |
 
 ---
 
