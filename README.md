@@ -1,3 +1,4 @@
+*Projet réalisé par Quentin Ovion, Martin Vaillant et Inès Peron.*
 
 # 🌤️ Weather's Outfit - Station Météo Connectée
 
@@ -54,11 +55,11 @@ Le système analyse 3 paramètres clés pour déterminer la tenue :
 
 ## 📂 5. Utilisation dans le Projet
 Ce dépôt GitHub contient :
-* `src/` : Le code source Arduino (.ino) pour la lecture des capteurs.
+* `src_code/` : Le code source Arduino (.ino) pour la lecture des capteurs.
 * `web/` : Les fichiers du site web pour l'affichage des solutions.
 * `docs/` : Les schémas de câblage et la documentation technique.
 
 Ce document sert de référence pour comprendre la structure du projet, faciliter la maintenance du code et permettre à d'autres développeurs de reproduire la station météo.
 
 ---
-*Projet réalisé par Quentin Ovion, Martin Vaillant et Inès Peron.*
+
