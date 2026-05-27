@@ -14,7 +14,6 @@ Le passage du temps et les variations météorologiques locales rendent souvent 
 ### Objectifs :
 * **Fiabilité :** Mesures locales précises (jardin, balcon) plutôt que des prévisions globales.
 * **Pédagogie :** Aider l'enfant à devenir autonome dans ses choix quotidiens.
-* **Simplicité :** Une interface web claire qui affiche directement la tenue à porter.
 
 ---
 
@@ -37,7 +36,7 @@ Le système analyse 3 paramètres clés pour déterminer la tenue :
 2. **Humidité :** Pour anticiper le besoin de vêtements de pluie.
 3. **Luminosité :** Pour recommander des accessoires (lunettes de soleil, casquette).
 
-**Résultat :** Le site web génère une recommandation parmi **24 combinaisons**, dont 8 sont spécifiquement optimisées pour les activités d'un enfant en extérieur.
+**Résultat :** Le code .ino génère une recommandation parmi **24 combinaisons**, dont 8 sont spécifiquement optimisées pour les activités d'un enfant en extérieur.
 
 ---
 
@@ -57,7 +56,6 @@ Le système analyse 3 paramètres clés pour déterminer la tenue :
 ## 📂 5. Utilisation dans le Projet
 Ce dépôt GitHub contient :
 * `src_code/` : Le code source Arduino (.ino) pour la lecture des capteurs.
-* `web/` : Les fichiers du site web pour l'affichage des solutions.
 
 Ce document sert de référence pour comprendre la structure du projet, faciliter la maintenance du code et permettre à d'autres développeurs de reproduire la station météo.
 
