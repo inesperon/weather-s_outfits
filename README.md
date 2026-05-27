@@ -1,5 +1,8 @@
 *Projet réalisé par Quentin Ovion, Martin Vaillant et Inès Peron.*
 
+<img width="407" height="124" alt="image" src="https://github.com/user-attachments/assets/8599df7d-7e05-4f5c-8b7a-1ef8038b61c3" />
+
+
 # 🌤️ Weather's Outfit - Station Météo Connectée
 
 > **Optimiser l'habillement des enfants grâce à l'IoT.**
