@@ -30,7 +30,7 @@ Le projet s'articule autour de composants basse consommation permettant une coll
 | **Capteur SHTC3** | Mesure précise de la **température** et de l'**humidité** relative. |
 | **Capteur LTR-303** | Mesure de la **luminosité** (Lux) pour détecter l'ensoleillement. |
 | **Module Radio/WiFi** | Transmission des informations vers le site web. |
-<img width="600" height="288" alt="image" src="https://github.com/user-attachments/assets/521cba7f-6f44-4b32-b077-9148d776504e" />
+<img width="640" height="453" alt="image" src="https://github.com/user-attachments/assets/4f5889b1-d940-4105-aef3-abf598a350a0" />
 
 ---
 
