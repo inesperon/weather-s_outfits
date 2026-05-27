@@ -1,4 +1,4 @@
-<img width="600" height="288" alt="image" src="https://github.com/user-attachments/assets/9b9db2e3-5f67-4bc7-ae5f-9093bc7d45ba" />*Projet réalisé par Quentin Ovion, Martin Vaillant et Inès Peron.*
+*Projet réalisé par Quentin Ovion, Martin Vaillant et Inès Peron.*
 
 <p align= "center"><img width="407" height="124" alt="image" src="https://github.com/user-attachments/assets/8599df7d-7e05-4f5c-8b7a-1ef8038b61c3" /></p>
 
