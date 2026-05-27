@@ -49,7 +49,7 @@ Le système analyse 3 paramètres clés pour déterminer la tenue :
 | **Séance 2** | 13-16 avril | Formation Github + démarrage projet |
 | **Séance 3** | 20-23 avril | Développement capteurs |
 | **Séance 4** | 27-30 avril | Présentation intermédiaire |
-| **Séance 5** |mai | Éssais intégration Lora
+| **Séance 5** | mai | Éssais intégration Lora
 | **Séance 6** | 26-28 mai | Présentation finale + démo |
 
 ---
@@ -58,7 +58,6 @@ Le système analyse 3 paramètres clés pour déterminer la tenue :
 Ce dépôt GitHub contient :
 * `src_code/` : Le code source Arduino (.ino) pour la lecture des capteurs.
 * `web/` : Les fichiers du site web pour l'affichage des solutions.
-* `docs/` : Les schémas de câblage et la documentation technique.
 
 Ce document sert de référence pour comprendre la structure du projet, faciliter la maintenance du code et permettre à d'autres développeurs de reproduire la station météo.
 
