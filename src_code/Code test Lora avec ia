@@ -1,0 +1,221 @@
+#include <lmic.h>
+#include <hal/hal.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <SHTSensor.h>
+#include <LTR303.h>
+
+// ======================================================
+//  CAPTEURS
+// ======================================================
+SHTSensor sht;
+LTR303 light;
+
+unsigned char gain = 0;
+unsigned char integrationTime = 0;
+unsigned char measurementRate = 3;
+
+// ======================================================
+//  CLÉS ABP TTN V3
+// ======================================================
+
+// Device Address (big endian)
+static const u4_t DEVADDR = 0x260B4B5A;
+
+// Network Session Key
+static const PROGMEM u1_t NWKSKEY[16] = {
+  0xF6, 0xAB, 0xF8, 0x15, 0xA7, 0x07, 0x2C, 0xE2,
+  0x9A, 0x31, 0x0D, 0x3C, 0x85, 0x5E, 0x6B, 0xE4
+};
+
+// App Session Key
+static const PROGMEM u1_t APPSKEY[16] = {
+  0x34, 0xB8, 0xED, 0x7B, 0x59, 0xD4, 0x34, 0x1A,
+  0xF5, 0xE9, 0x06, 0xB9, 0x36, 0x30, 0xF7, 0xB3
+};
+
+// ======================================================
+//  PINMAP UCA (RFM95W / SX1276)
+// ======================================================
+const lmic_pinmap lmic_pins = {
+    .nss = 10,               // SS → SEL
+    .rxtx = LMIC_UNUSED_PIN,
+    .rst = 8,                // D8 → RST
+    .dio = {6, 6, 6}         // DIO0, DIO1, DIO2 → tous sur D6
+};
+
+// ======================================================
+//  CONSTRUCTION DE LA TENUE
+// ======================================================
+String construireTenue(float temp, float hum, float lux) {
+  String t = "";
+
+  bool ensoleille = (lux >= 10000);
+  bool humide = (hum > 60);
+  bool tresHumide = (hum > 80);
+
+  // CANICULE > 36°C
+  if (temp > 36) {
+    if (!humide) {
+      t += "CANICULE SECHE\nHaut: Debardeur\nBas: Short\nChaussures: Sandales\nAcc: Chapeau+lunettes+creme\n";
+    } else {
+      t += "CANICULE HUMIDE\nHaut: Debardeur leger\nBas: Short\nChaussures: Sandales\nAcc: Chapeau+eau. DANGER !\n";
+    }
+    return t;
+  }
+
+  // TRES CHAUD 26-35°C
+  if (temp >= 26) {
+    if (ensoleille && !humide) {
+      t += "TRES CHAUD ENSOLEILLE\nHaut: T-shirt\nBas: Short\nChaussures: Sandales\nAcc: Casquette+lunettes+creme\n";
+    } else if (ensoleille && humide) {
+      t += "TRES CHAUD ENSOLEILLE HUMIDE\nHaut: T-shirt\nBas: Short\nChaussures: Basket\nAcc: Casquette+creme\n";
+    } else if (!ensoleille && !humide) {
+      t += "TRES CHAUD NUAGEUX\nHaut: T-shirt\nBas: Short\nChaussures: Basket\nAcc: Rien\n";
+    } else {
+      t += "TRES CHAUD HUMIDE\nHaut: T-shirt respirant\nBas: Short\nChaussures: Basket\nAcc: Coupe-vent dans sac\n";
+    }
+    return t;
+  }
+
+  // CHAUD 18-25°C
+  if (temp >= 18) {
+    if (ensoleille && !humide) {
+      t += "CHAUD ENSOLEILLE\nHaut: T-shirt\nBas: Jean leger\nChaussures: Basket\nAcc: Lunettes de soleil\n";
+    } else if (ensoleille && humide) {
+      t += "CHAUD ENSOLEILLE HUMIDE\nHaut: T-shirt + coupe-vent\nBas: Jean\nChaussures: Basket\nAcc: Lunettes+parapluie\n";
+    } else if (!ensoleille && !humide) {
+      t += "CHAUD NUAGEUX\nHaut: T-shirt + veste legere\nBas: Jean\nChaussures: Basket\nAcc: Veste dans sac\n";
+    } else if (!tresHumide) {
+      t += "CHAUD HUMIDE\nHaut: T-shirt + impermeable\nBas: Jean\nChaussures: Basket imp.\nAcc: Parapluie\n";
+    } else {
+      t += "CHAUD TRES HUMIDE\nHaut: T-shirt + impermeable\nBas: Jean impermeable\nChaussures: Bottes pluie\nAcc: Parapluie\n";
+    }
+    return t;
+  }
+
+  // DOUX 11-17°C
+  if (temp >= 11) {
+    if (ensoleille && !humide) {
+      t += "DOUX ENSOLEILLE\nHaut: T-shirt + gilet\nBas: Jean\nChaussures: Basket\nAcc: Lunettes de soleil\n";
+    } else if (ensoleille && humide) {
+      t += "DOUX ENSOLEILLE HUMIDE\nHaut: Pull + coupe-vent\nBas: Jean\nChaussures: Basket imp.\nAcc: Echarpe\n";
+    } else if (!ensoleille && !humide) {
+      t += "DOUX NUAGEUX\nHaut: Pull ou sweat\nBas: Jean\nChaussures: Basket\nAcc: Echarpe legere\n";
+    } else if (!tresHumide) {
+      t += "DOUX HUMIDE\nHaut: Pull + impermeable\nBas: Jean\nChaussures: Basket imp.\nAcc: Parapluie\n";
+    } else {
+      t += "DOUX TRES HUMIDE\nHaut: Pull + impermeable\nBas: Jean impermeable\nChaussures: Bottes pluie\nAcc: Parapluie\n";
+    }
+    return t;
+  }
+
+  // FRAIS 1-10°C
+  if (temp >= 1) {
+    if (ensoleille && !humide) {
+      t += "FRAIS ENSOLEILLE\nHaut: Pull + veste\nBas: Jean epais\nChaussures: Chaussures fermees\nAcc: Echarpe + bonnet\n";
+    } else if (ensoleille && humide) {
+      t += "FRAIS ENSOLEILLE HUMIDE\nHaut: Pull + impermeable\nBas: Jean epais\nChaussures: Chaussures imp.\nAcc: Echarpe+bonnet+parapluie\n";
+    } else if (!ensoleille && !humide) {
+      t += "FRAIS NUAGEUX\nHaut: Pull + manteau leger\nBas: Jean epais\nChaussures: Chaussures fermees\nAcc: Echarpe + bonnet\n";
+    } else {
+      t += "FRAIS HUMIDE\nHaut: Pull + impermeable\nBas: Jean epais\nChaussures: Bottes\nAcc: Echarpe+bonnet+parapluie\n";
+    }
+    return t;
+  }
+
+  // GRAND FROID < 1°C
+  if (ensoleille && !humide) t += "GRAND FROID ENSOLEILLE\n";
+  else if (ensoleille && humide) t += "GRAND FROID ENSOLEILLE HUMIDE\n";
+  else if (!ensoleille && !humide) t += "GRAND FROID SEC\n";
+  else t += "GRAND FROID HUMIDE\n";
+
+  t += "Haut: Pull + manteau chaud\nBas: Pantalon chaud\nChaussures: Bottes chaudes\nAcc: Echarpe+bonnet+gants\n";
+
+  return t;
+}
+
+// ======================================================
+//  ENVOI LORAWAN
+// ======================================================
+void sendTenueLoRaWAN(const String &tenue) {
+    uint8_t payload[51];
+    uint8_t len = tenue.length();
+
+    if (len > 51) len = 51;  // Limite SF7
+
+    memcpy(payload, tenue.c_str(), len);
+
+    LMIC_setTxData2(1, payload, len, 0);
+    Serial.println(F("Uplink LoRaWAN envoyé"));
+}
+
+// ======================================================
+//  SETUP
+// ======================================================
+void setup() {
+  Serial.begin(115200);
+  Wire.begin();
+
+  Serial.println(F("--- Projet UCA : Tenue Meteo LoRaWAN ABP ---"));
+
+  // Init capteurs
+  if (sht.init()) Serial.println(F("Capteur SHTC3 : OK"));
+  else Serial.println(F("Capteur SHTC3 : Erreur !"));
+
+  if (light.begin()) {
+    light.setControl(gain, false, true);
+    light.setMeasurementRate(integrationTime, measurementRate);
+    light.setPowerUp();
+    Serial.println(F("Capteur LTR303 : OK"));
+  } else {
+    Serial.println(F("Capteur LTR303 : Erreur !"));
+  }
+
+  // Init LoRaWAN
+  os_init();
+  LMIC_reset();
+
+  LMIC_setSession (0x13, DEVADDR, NWKSKEY, APPSKEY);
+
+  LMIC_setDrTxpow(DR_SF7, 14);
+  LMIC_selectSubBand(1);
+
+  Serial.println(F("LoRaWAN ABP prêt."));
+}
+
+// ======================================================
+//  LOOP
+// ======================================================
+void loop() {
+  os_runloop_once();
+
+  float temp = 0, hum = 0;
+  double lux = 0;
+
+  if (sht.readSample()) {
+    temp = sht.getTemperature();
+    hum  = sht.getHumidity();
+  }
+
+  unsigned int rawCH0, rawCH1;
+  if (light.getData(rawCH0, rawCH1)) {
+    light.getLux(gain, integrationTime, rawCH0, rawCH1, lux);
+  }
+
+  Serial.println(F("=============================="));
+  Serial.print(F("Temp      : ")); Serial.print(temp, 1); Serial.println(F(" C"));
+  Serial.print(F("Humidite  : ")); Serial.print(hum,  1); Serial.println(F(" %"));
+  Serial.print(F("Luminosite: ")); Serial.print((int)lux); Serial.println(F(" lux"));
+  Serial.println(F("------------------------------"));
+
+  String tenue = construireTenue(temp, hum, (float)lux);
+
+  Serial.println(F("TENUE RECOMMANDEE :"));
+  Serial.print(tenue);
+
+  sendTenueLoRaWAN(tenue);
+
+  Serial.println(F("=============================="));
+  delay(5000);
+}
