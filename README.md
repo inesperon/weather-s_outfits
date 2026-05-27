@@ -49,7 +49,7 @@ Le système analyse 3 paramètres clés pour déterminer la tenue :
 | **Séance 2** | 13-16 avril | Formation Github + démarrage projet |
 | **Séance 3** | 20-23 avril | Développement capteurs |
 | **Séance 4** | 27-30 avril | Présentation intermédiaire |
-| **Séance 5** |mai | Éssais intégration Lora
+| **Séance 5** | mai | Éssais intégration Lora
 | **Séance 6** | 26-28 mai | Présentation finale + démo |
 
 ---
